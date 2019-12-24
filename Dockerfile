@@ -1,5 +1,4 @@
 FROM openjdk:8-jdk
-MAINTAINER Marek Obuchowicz <marek@korekontrol.eu>
 
 # Tini
 ADD https://github.com/krallin/tini/releases/download/v0.18.0/tini /tini
@@ -17,13 +16,18 @@ RUN curl -sSL https://get.docker.com/ | sh && \
 
 # Debian packages
 RUN apt-get update -qy && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -qy python-pip groff-base && \
+    DEBIAN_FRONTEND=noninteractive \
+    apt-get install -qy \
+        python3 \
+        python3-pip \
+        python3-dev \
+        groff-base && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 # AWS CLI, j2cli
-RUN pip install awscli && \
-    pip install j2cli
+RUN pip3 install awscli && \
+    pip3 install j2cli
 
 # Jenkins
 ENV HOME /home/jenkins
