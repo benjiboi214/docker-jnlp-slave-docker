@@ -25,6 +25,9 @@ RUN apt-get update -qy && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# Docker Compose
+RUN pip3 install docker-compose
+
 # AWS CLI, j2cli
 RUN pip3 install awscli && \
     pip3 install j2cli
