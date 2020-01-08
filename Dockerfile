@@ -4,6 +4,13 @@ FROM openjdk:8-jdk
 ADD https://github.com/krallin/tini/releases/download/v0.18.0/tini /tini
 RUN chmod +x /tini
 
+# Install docker
+RUN apt-get update -qy && \
+    apt-get install -qy \
+        docker-ce \
+        docker-ce-cli \
+        containerd.io
+
 # Install docker client, kubectl and helm
 RUN curl -sSL https://get.docker.com/ | sh && \
     curl https://raw.githubusercontent.com/helm/helm/master/scripts/get > get_helm.sh && \
