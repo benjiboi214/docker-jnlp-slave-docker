@@ -1,39 +1,11 @@
-FROM openjdk:8-jdk
+FROM python:3.7-alpine
 
 # Tini
 ADD https://github.com/krallin/tini/releases/download/v0.18.0/tini /tini
 RUN chmod +x /tini
 
-# Install docker
-RUN apt-get update -qy && \
-    apt-get install -qy \
-        docker-ce \
-        docker-ce-cli \
-        containerd.io
-
-# Install docker client, kubectl and helm
-RUN curl -sSL https://get.docker.com/ | sh && \
-    curl https://raw.githubusercontent.com/helm/helm/master/scripts/get > get_helm.sh && \
-    chmod 700 get_helm.sh && \
-    ./get_helm.sh && \
-    rm -f get_helm.sh && \
-    curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && \
-    chmod 755 kubectl && \
-    mv kubectl /usr/local/bin/kubectl
-
-# Debian packages
-RUN apt-get update -qy && \
-    DEBIAN_FRONTEND=noninteractive \
-    apt-get install -qy \
-        python3 \
-        python3-pip \
-        python3-dev \
-        groff-base && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# Docker Compose
-RUN pip3 install docker-compose
+# Get Curl
+RUN apk add curl
 
 # AWS CLI, j2cli
 RUN pip3 install awscli && \
@@ -41,8 +13,7 @@ RUN pip3 install awscli && \
 
 # Jenkins
 ENV HOME /home/jenkins
-RUN useradd -c "Jenkins user" -d $HOME -u 10000 -g 999 -m jenkins
-RUN usermod -aG docker jenkins
+RUN adduser --home $HOME --uid 10000 --disabled-password jenkins
 LABEL Description="This is a base image, which provides the Jenkins agent executable (slave.jar) and tools: j2cli, awscli, docker client, kubectl and helm" Vendor="KoreKontrol" Version="3.27"
 
 ARG VERSION=3.27
